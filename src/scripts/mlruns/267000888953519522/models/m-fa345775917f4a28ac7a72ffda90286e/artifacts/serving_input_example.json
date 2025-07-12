@@ -1,0 +1,22 @@
+{
+  "dataframe_split": {
+    "columns": [
+      "balloon_dia_mm",
+      "material_thickness_mm",
+      "stretch_ratio",
+      "polymer_modulus_mpa",
+      "bond_temp_C",
+      "cooling_rate_Cps"
+    ],
+    "data": [
+      [
+        4.0,
+        0.059,
+        5.147,
+        1789.564,
+        150.002,
+        12.919
+      ]
+    ]
+  }
+}

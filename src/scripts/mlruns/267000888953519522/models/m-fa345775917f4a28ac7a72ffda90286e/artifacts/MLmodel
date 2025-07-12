@@ -1,0 +1,37 @@
+artifact_path: file:///C:/Users/adagi/OneDrive/Python%20Development/bigproject/src/scripts/mlruns/267000888953519522/models/m-fa345775917f4a28ac7a72ffda90286e/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.8
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.4.2
+is_signature_from_type_hint: false
+mlflow_version: 3.1.0
+model_id: m-fa345775917f4a28ac7a72ffda90286e
+model_size_bytes: 7315365
+model_uuid: m-fa345775917f4a28ac7a72ffda90286e
+prompts: null
+run_id: 30be4961e6be4678b3a97456604de5d3
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "balloon_dia_mm", "required": true}, {"type":
+    "double", "name": "material_thickness_mm", "required": true}, {"type": "double",
+    "name": "stretch_ratio", "required": true}, {"type": "double", "name": "polymer_modulus_mpa",
+    "required": true}, {"type": "double", "name": "bond_temp_C", "required": true},
+    {"type": "double", "name": "cooling_rate_Cps", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-07-12 01:57:30.461325'
