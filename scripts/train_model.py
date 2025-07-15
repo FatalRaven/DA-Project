@@ -38,11 +38,18 @@ with mlflow.start_run() as run:
     model = RandomForestRegressor(n_estimators=100, random_state=SEED)
     model.fit(X_train, y_train)
 
-# Prediction and evaluation
-y_pred = model.predict(X_test)
-r2 = r2_score(y_test, y_pred)
-mae = mean_absolute_error(y_test, y_pred)
-rmse = root_mean_squared_error(y_test, y_pred)
+    # Prediction and evaluation
+    y_pred = model.predict(X_test)
+    r2 = r2_score(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = root_mean_squared_error(y_test, y_pred)
+
+    # Log metrics
+    mlflow.log_metric("r2_score", r2)
+    mlflow.log_metric("mean_absolute_error", mae)
+    mlflow.log_metric("root_mean_squared_error", rmse)
+
+
 
 print(f"MLflow run ID: {run.info.run_id}")
 print(f"Model trained and logged: R² = {r2:.3f}, MAE = {mae:.3f}, RMSE = {rmse:.3f}")
