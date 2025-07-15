@@ -1,0 +1,29 @@
+# Ignore raw data
+data/
+!data/.gitkeep
+
+# Ignore model prediction logs and pre-runs
+predrun/
+predrun/.trash/
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore IDE configs
+.idea/
+
+# Ignore DVC artifacts if using DVC
+dvc.lock
+*.dvc
+
+# Ignore MLflow internal downloads like model reloads
+models/
+datasets/
+
+# OS artifacts
+.DS_Store
+.env

@@ -9,23 +9,19 @@ import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
-
-# Set a custom tracking URI for predictions with prediction log naming.
+# Set path for storing prediction run JSON outputs.
 EXPERIMENT_NAME = "Burst_Pressure_Modeling"
 
 PREDRUN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "predrun"))
-mlflow.set_tracking_uri("file:mlruns")
-mlflow.set_experiment("Prediction_Logs")
 
-# Set dir for storing prediction outputs
+# Set dir for storing prediction outputs.
 PRED_LOG_DIR = os.path.abspath(os.path.join("predrun"))
 os.makedirs(PRED_LOG_DIR, exist_ok=True)
 
 timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 output_file = os.path.join(PRED_LOG_DIR, f"prediction_{timestamp}.json")
 
-
-# Load latest model with error handling and run model
+# Load latest model with error handling and run model.
 def load_latest_model(experiment_name: str):
     client = MlflowClient()
     experiment = mlflow.get_experiment_by_name(experiment_name)
