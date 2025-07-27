@@ -10,7 +10,7 @@ import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
 # Set path for storing prediction run JSON outputs.
-EXPERIMENT_NAME = "Burst_Pressure_Modeling"
+EXPERIMENT_NAME = "Burst_Pressure_Model"
 
 PREDRUN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "predrun"))
 
@@ -22,27 +22,15 @@ timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 output_file = os.path.join(PRED_LOG_DIR, f"prediction_{timestamp}.json")
 
 # Load latest model with error handling and run model.
-def load_latest_model(experiment_name: str):
-    client = MlflowClient()
-    experiment = mlflow.get_experiment_by_name(experiment_name)
-
-    if experiment is None:
-        raise ValueError(f"Experiment '{experiment_name}' not found.")
-
-    runs = client.search_runs(
-        experiment_ids=[experiment.experiment_id],
-        order_by=["start_time DESC"],
-        max_results=1
-    )
-
-    if not runs:
-        raise ValueError("No runs found in the experiment.")
-
-    run = runs[0]
-    model_uri = f"runs:/{run.info.run_id}/model"
-    print(f"Loading model from: {model_uri}")
-    model = mlflow.sklearn.load_model(model_uri)
-    return model, run.info.run_id
+def load_latest_model(model_name: str):
+    try:
+        model_uri = f"models:/{model_name}/latest"
+        print(f"[INFO] Loading model from registry URI: {model_uri}")
+        model = mlflow.sklearn.load_model(model_uri)
+        return model, model_uri
+    except Exception as e:
+        print(f"[ERROR] Failed to load model from registry: {e}")
+        raise
 
 
 def main():
@@ -56,9 +44,9 @@ def main():
     }])
 
     try:
-        model, run_id = load_latest_model(EXPERIMENT_NAME)
+        model, model_uri = load_latest_model(EXPERIMENT_NAME)
         prediction = model.predict(input_data)[0]
-        print(f"Predicted burst pressure (Run ID {run_id}): {prediction:.2f} psi")
+        print(f"Predicted burst pressure (Model URI {model_uri}): {prediction:.2f} psi")
 
         payload = {
             "input": input_data.to_dict(orient="records")[0],

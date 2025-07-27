@@ -50,6 +50,18 @@ def summarize_runs(runs):
     return df
 
 
+def register_best_model(run_id: str, model_name: str = "Burst_Pressure_Model"):
+    client = MlflowClient()
+    model_uri = f"runs:/{run_id}/model"
+
+    print(f"\nRegistering model from run_id: {run_id}")
+    try:
+        result = mlflow.register_model(model_uri=model_uri, name=model_name)
+        print(f"Model registered: name={result.name}, version={result.version}")
+    except Exception as e:
+        print(f"Failed to register model: {e}")
+
+
 # Gets all runs and summarizes them in the dataframe
 def main():
     runs = get_all_runs(EXPERIMENT_NAME)
@@ -62,6 +74,15 @@ def main():
     os.makedirs('reports', exist_ok=True)
     summary_df.to_csv(output_path, index=False)
     print(f"\n Summary saved to {output_path}")
+
+    # Log the summary file to MLflow
+    mlflow.set_experiment(EXPERIMENT_NAME)
+    with mlflow.start_run(run_name="log_evaluation_summary"):
+        mlflow.log_artifact(output_path, artifact_path="evaluation_summary")
+
+    # Register best-performing model
+    best_run_id = summary_df.iloc[0]['run_id']
+    register_best_model(best_run_id)
 
 if __name__ == '__main__':
     main()

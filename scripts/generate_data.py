@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.datasets import make_regression
+import os
 
 np.random.seed(1982)
 n_samples = 1000
@@ -33,13 +33,9 @@ def sim_bimodal_dist(mean1, std1, mean2, std2, ratio, size) -> np.ndarray:
 # Parameters for simulated scripts
 
 balloon_dia_mm = np.random.choice([3.0, 4.0, 5.0], size=n_samples, p=[0.3, 0.5, 0.2])
-
 material_thick_mm = truncated_normal(0.06, 0.01, 0.04, 0.08, n_samples)
-
 stretch_ratio_mm = truncated_normal(4.5, 0.4, 3.5, 5.5, n_samples)
-
 polymer_modulus_mpa = np.random.normal(1500, 200, n_samples)
-
 bond_temp_C = sim_bimodal_dist(
     mean1=150, std1=5,
     mean2=185, std2=5,
@@ -51,7 +47,7 @@ cooling_rate_Cps = np.clip(
     5, 20
 )
 
-# Put the scripts together
+# Put the parameters together
 df = pd.DataFrame({
     "balloon_dia_mm": balloon_dia_mm,
     "material_thickness_mm": material_thick_mm,
@@ -62,7 +58,6 @@ df = pd.DataFrame({
 })
 
 # Generate targets
-
 noise = np.random.normal(0, 5, n_samples)
 
 df["burst_pressure_psi"] = (
@@ -76,6 +71,10 @@ df["burst_pressure_psi"] = (
 )
 
 df = df.round(3)
-output_path = "/data/raw/simulated_data.csv"
-df.to_csv(output_path, index=False)
-print(f"Simulated Scripts generated and written to {output_path}")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_PATH = os.path.join(BASE_DIR, "..", "data", "raw", "simulated_data.csv")
+os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)  # Create directory if needed
+
+df.to_csv(OUTPUT_PATH, index=False)
+print(f"Simulated Scripts generated and written to {OUTPUT_PATH}")
