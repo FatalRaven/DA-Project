@@ -1,10 +1,11 @@
 import pandas as pd
-import numpy as np
 import os
 
 from random import randint
-import mlflow
 import mlflow.sklearn
+
+from mlflow.models.signature import infer_signature
+from mlflow.tracking import MlflowClient
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
@@ -18,7 +19,7 @@ from sklearn.utils import shuffle
 # Define path and constants
 BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "data", "raw", "simulated_data.csv"))
-SEED      = randint(0, 9999)
+SEED = randint(0, 9999)
 
 # Load & shuffle data
 df = pd.read_csv(DATA_PATH)
@@ -50,6 +51,23 @@ with mlflow.start_run() as run:
     mlflow.log_metric("r2_score", r2)
     mlflow.log_metric("mean_absolute_error", mae)
     mlflow.log_metric("root_mean_squared_error", rmse)
+
+    signature = infer_signature(X_test, y_pred)
+    mlflow.sklearn.log_model(
+        model,
+        name="model",
+        input_example=X_test.iloc[:5],
+        signature=signature
+    )
+
+    client = MlflowClient()
+    model_uri = f"runs:/{run.info.run_id}/model"
+    result = mlflow.register_model(
+        model_uri=model_uri,
+        name="Burst_Pressure_Model"
+    )
+
+    print(f"[INFO] Registered as version {result.version} of Burst_Pressure_Model")
 
 print(f"Training run ID: {run.info.run_id}")
 print(f"Model trained and logged: R² = {r2:.3f}, MAE = {mae:.3f}, RMSE = {rmse:.3f}")

@@ -4,13 +4,14 @@ import json
 from datetime import datetime
 import traceback
 
+
 import pandas as pd
 import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
 # Set path for storing prediction run JSON outputs.
-EXPERIMENT_NAME = "Burst_Pressure_Model"
+REGISTERED_MODEL_NAME = "Burst_Pressure_Model"
 
 PREDRUN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "predrun"))
 
@@ -24,7 +25,7 @@ output_file = os.path.join(PRED_LOG_DIR, f"prediction_{timestamp}.json")
 # Load latest model with error handling and run model.
 def load_latest_model(model_name: str):
     try:
-        model_uri = f"models:/{model_name}/latest"
+        model_uri = f"models:/{model_name}@production"
         print(f"[INFO] Loading model from registry URI: {model_uri}")
         model = mlflow.sklearn.load_model(model_uri)
         return model, model_uri
@@ -44,7 +45,7 @@ def main():
     }])
 
     try:
-        model, model_uri = load_latest_model(EXPERIMENT_NAME)
+        model, model_uri = load_latest_model(REGISTERED_MODEL_NAME)
         prediction = model.predict(input_data)[0]
         print(f"Predicted burst pressure (Model URI {model_uri}): {prediction:.2f} psi")
 

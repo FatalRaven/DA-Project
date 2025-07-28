@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import mlflow
 from mlflow.tracking import MlflowClient
+import time
 
 # Define constants
 EXPERIMENT_NAME = 'Burst_Pressure_Modeling'
@@ -57,9 +58,16 @@ def register_best_model(run_id: str, model_name: str = "Burst_Pressure_Model"):
     print(f"\nRegistering model from run_id: {run_id}")
     try:
         result = mlflow.register_model(model_uri=model_uri, name=model_name)
-        print(f"Model registered: name={result.name}, version={result.version}")
-    except Exception as e:
-        print(f"Failed to register model: {e}")
+        version = str(result.version)
+        print(f"[INFO] Model registered: name={result.name}, version={version}")
+
+        # Wait for registry metadata sync
+        time.sleep(2)
+
+    except mlflow.exceptions.MlflowException as err:
+        print(f"[ERROR] Model registration failed: {type(err).__name__}")
+
+
 
 
 # Gets all runs and summarizes them in the dataframe
